@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "chart.js": "^4.4.2",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "smartwizard": "^6.0.6"
+  }
+}

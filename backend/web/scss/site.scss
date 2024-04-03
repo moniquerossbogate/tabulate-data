@@ -1,0 +1,105 @@
+@import "../../vendor/npm-asset/bootstrap/scss/functions";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/bootstrap-variables";
+
+$light: #ded5d7;
+$dark: #0a0a31;
+$primary: #3a4458;
+$secondary: #5d669c;
+$info: #59abcd;
+$accent1: #58e1be;
+$accent2: #10926b;
+$accent3: #26ac9f;
+$success: #0ab466;
+$warning: #e8cf09;
+$danger: #fa1203;
+
+$white: #ffffff;
+
+$theme-colors: (
+  "light": $light,
+  "dark": $dark,
+  "primary": $primary,
+  "secondary": $secondary,
+  "info": $info,
+  "accent1": $accent1,
+  "accent2": $accent2,
+  "accent3": $accent3,
+  "success": $success,
+  "warning": $warning,
+  "danger": $danger,
+);
+
+//..adminlte sidebar variables found in..
+//.. "../../vendor/almasaeed2010/adminlte/build/scss/_variables.scss"
+$sidebar-dark-bg: $dark !default;
+$sidebar-dark-hover-bg: rgba(255, 255, 255, 0.1) !default;
+$sidebar-dark-color: #c2c7d0 !default;
+$sidebar-dark-hover-color: $white !default;
+$sidebar-dark-active-color: $white !default;
+$sidebar-dark-submenu-bg: transparent !default;
+$sidebar-dark-submenu-color: #c2c7d0 !default;
+$sidebar-dark-submenu-hover-color: $white !default;
+$sidebar-dark-submenu-hover-bg: $sidebar-dark-hover-bg !default;
+$sidebar-dark-submenu-active-color: $sidebar-dark-bg !default;
+$sidebar-dark-submenu-active-bg: rgba(255, 255, 255, 0.9) !default;
+$main-header-bottom-border-color: $info !default;
+
+// Light sidebar
+$sidebar-light-bg: $white !default;
+$sidebar-light-hover-bg: rgba($black, 0.1) !default;
+$sidebar-light-color: $gray-800 !default;
+$sidebar-light-hover-color: $gray-900 !default;
+$sidebar-light-active-color: $black !default;
+$sidebar-light-submenu-bg: transparent !default;
+$sidebar-light-submenu-color: #777 !default;
+$sidebar-light-submenu-hover-color: $black !default;
+$sidebar-light-submenu-hover-bg: $sidebar-light-hover-bg !default;
+$sidebar-light-submenu-active-color: $sidebar-light-hover-color !default;
+$sidebar-light-submenu-active-bg: $sidebar-light-submenu-hover-bg !default;
+
+@import "../../vendor/almasaeed2010/adminlte/build/scss/variables";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/variables-alt";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/mixins";
+
+@import "../../vendor/npm-asset/bootstrap/scss/bootstrap.scss";
+
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/core";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/components";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/extra-components";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/pages";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/plugins";
+@import "../../vendor/almasaeed2010/adminlte/build/scss/parts/miscellaneous";
+
+//..insert custom styles here
+.content-wrapper {
+  background-color: linear-gradient(340deg, $primary 47%, #ffffff 48%);
+}
+
+#TabGrid {
+  border-radius: 66px;
+  background: #e0e0e0;
+  box-shadow: 35px 35px 70px #bebebe, -35px -35px 70px #ffffff;
+}
+
+:root {
+  --sw-border-color: #eeeeee;
+  --sw-toolbar-btn-color: #ffffff;
+  --sw-toolbar-btn-background-color: #009ef7;
+  --sw-anchor-default-primary-color: #f8f9fa;
+  --sw-anchor-default-secondary-color: #b0b0b1;
+  --sw-anchor-active-primary-color: #009ef7;
+  --sw-anchor-active-secondary-color: #ffffff;
+  --sw-anchor-done-primary-color: #90d4fa;
+  --sw-anchor-done-secondary-color: #fefefe;
+  --sw-anchor-disabled-primary-color: #f8f9fa;
+  --sw-anchor-disabled-secondary-color: #dbe0e5;
+  --sw-anchor-error-primary-color: #dc3545;
+  --sw-anchor-error-secondary-color: #ffffff;
+  --sw-anchor-warning-primary-color: #ffc107;
+  --sw-anchor-warning-secondary-color: #ffffff;
+  --sw-progress-color: #009ef7;
+  --sw-progress-background-color: #f8f9fa;
+  --sw-loader-color: #009ef7;
+  --sw-loader-background-color: #f8f9fa;
+  --sw-loader-background-wrapper-color: rgba(255, 255, 255, 0.7);
+}

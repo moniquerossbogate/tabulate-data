@@ -1,0 +1,7 @@
+MIGRATIONS: 
+ php yii migrate
+ php yii migrate/create create_choices_table
+ php yii migrate/create create_merge_table
+ php yii migrate/create create_questionaires_table
+ php yii migrate/create create_merge_table  
+ php yii migrate/create create_survey_response_table
