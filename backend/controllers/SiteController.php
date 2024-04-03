@@ -148,7 +148,7 @@ class SiteController extends Controller
         foreach ($questions as $question) {
 
             $formattedQuestions[] = [
-                $question->question_text, // Adjust with the correct attribute name
+                $question->question_text, 
 
             ];
         }

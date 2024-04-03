@@ -72,7 +72,22 @@ $this->title = 'Tabulate Data';
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-sm-3 col-6">
-                            <div class="description-block border-right" id="question-container">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container1">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container2">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container3">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container4">
 
                             </div>
                         </div>
@@ -161,8 +176,18 @@ $this->registerJs(
                 labels: typeData,
                 datasets: [{
                     label: 'Count of Respondents per Question',
-                    backgroundColor: 'rgba(175,222,192)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 205, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    ],
+                    borderColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)',
+                    ],
                     borderWidth: 1,
                     datalabels: {
                         color: 'red',
@@ -209,39 +234,42 @@ $this->registerJs(
         });
 
         // AJAX request to fetch questions
-            $('#question-select').on('change', function() {
-            var selectedTitle = $(this).val();
-            $.ajax({
-                url: 'questions',
-                type: 'GET',
-                data: { titleId: selectedTitle },
-                success: function(response) {
-                    $('#question-container').empty(); 
-                    
-                    if (Array(response)) {
-                        for (var i = 0; i < response.length; i++) {
-                            var questionTextArray = response[i];
-                            if (Array(questionTextArray) && questionTextArray.length > 0) {
-                                var questionText = questionTextArray[0];
-                                const regex = /[^\w\s,]/g; // Regular expression to match non-alphanumeric characters except spaces and commas
-                                questionText = questionText.replace(regex, ''); 
-                                
-                                $('.description-block').append('<span class="description-text">' + questionText + '</span>');
-                            } else {
-                                console.error('Invalid item in response:', questionTextArray);
+        $('#question-select').on('change', function() {
+            const selectedTitle = $(this).val();
+                if (selectedTitle) {
+                $.ajax({
+                    url: 'questions',
+                    type: 'GET',
+                    data: { titleId: selectedTitle },
+                    success: function(response) {
+                        $('#question-container').empty();
+                        $('.description-block').show();
+                        if (Array(response)) {
+                                const regex = /[^\w\s,]/g; 
+                                questionText = response.replace(regex, ''); 
+                                let wordsArray = questionText.split(',');
+                                wordsArray = wordsArray.map(word => word.trim());
+                                console.log('text:', wordsArray);
+                                //this is the fucking line to populate the data by column
+                                for (let i = 1; i <= wordsArray.length; i++) {
+                                let container = document.getElementById("question-container" + i);
+                                if (container) { // Check if the container exists
+                                    container.textContent = wordsArray[i - 1];
+                                }
                             }
+                            }else {
+                            console.error('Unexpected response format:', response);
+                            $('#question-container').text('Error: Unexpected response format');
                         }
-                    } else {
-                        console.error('Unexpected response format:', response);
-                        $('#question-container').text('Error: Unexpected response format');
-                    }
-                },
+                    },
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', xhr.responseText);
                 }
-            });
+                });
+            } else {
+                $('.description-block').hide();
+            }
         });
-
 
 
     })();
