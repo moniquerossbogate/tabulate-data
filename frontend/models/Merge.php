@@ -9,13 +9,12 @@ use Yii;
  *
  * @property int $id
  * @property int $choices_id
- * @property string $question_text
- * @property string $question_type
  *
  * @property Choices $choices
  */
 class Merge extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -30,10 +29,10 @@ class Merge extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['choices_id', 'question_text', 'question_type'], 'required'],
-            [['choices_id'], 'integer'],
-            [['question_text', 'question_type'], 'string'],
+            [['question_type', 'question_text'], 'required'],
+            [['choices_id', 'questionnaire_id'], 'integer'],
             [['choices_id'], 'exist', 'skipOnError' => true, 'targetClass' => Choices::class, 'targetAttribute' => ['choices_id' => 'id']],
+            [['questionnaire_id'], 'exist', 'skipOnError' => true, 'targetClass' => Questionnaire::class, 'targetAttribute' => ['questionnaire_id' => 'id']],
         ];
     }
 
@@ -45,8 +44,9 @@ class Merge extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'choices_id' => 'Choices ID',
-            'question_text' => 'Question Text',
+            'questionnaire_id' => 'Questions',
             'question_type' => 'Question Type',
+            'question_text' => 'Question',
         ];
     }
 
@@ -58,5 +58,9 @@ class Merge extends \yii\db\ActiveRecord
     public function getChoices()
     {
         return $this->hasOne(Choices::class, ['id' => 'choices_id']);
+    }
+    public function getQuestions()
+    {
+        return $this->hasOne(Questionnaire::class, ['id' => 'questionnaire_id']);
     }
 }

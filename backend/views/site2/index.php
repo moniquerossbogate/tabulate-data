@@ -2,99 +2,134 @@
 
 use app\models\Questionnaire;
 use kartik\select2\Select2;
+use yii\bootstrap4\Html;
 use yii\helpers\ArrayHelper;
+use app\assets\ChartJsAsset;
 
 /** @var yii\web\View $this */
 $titles = Questionnaire::getQuestions();
 $this->title = 'Tabulate Data';
 ?>
 <style>
-.question {
-    margin-right: 10px;
-}
+    .question {
+        margin-right: 10px;
+        /* Adjust this value as needed */
+    }
 </style>
-<div>Total Count of Respondents: <span id="total-count"></span>/<span>120</span></div>
-<div class="col-md-8" style="padding-top: 10px">
-    <?php
-    echo Select2::widget([
-        'name' => 'state_10',
-        'data' => ArrayHelper::map($titles, 'id', 'title'),
-        'options' => [
-            'id' => 'question-select',
-            'placeholder' => 'Please Select Question',
-            'multiple' => false,
-            'value' => 1,
-        ],
-        'pluginOptions' => [
-            'allowClear' => true
-        ]
-    ]);
-    ?>
+    <div>Total Count of Respondents: <span id="total-count"></span>/<span>120</span></div>
+                    <div class="col-md-8" style="padding-top: 10px">
+                        <?php
+                            echo Select2::widget([
+                                'name' => 'state_10',
+                                'data' => ArrayHelper::map($titles, 'id', 'title'),
+                                'options' => [
+                                   'id' => 'question-select',
+                                    'placeholder' => 'Please Select Question',
+                                    'multiple' => false,
+                                    'value' => 1,
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ]
+                            ]);
+                        ?>
 
-</div>
+                    </div>
 
-<canvas id="myChart" width="400" height="100"></canvas>
+                <canvas id="myChart" width="400" height="100"></canvas>
+                <!-- ./card-body -->
+                <!-- 
+                <div class="card-footer">
+                    <div class="question row" id="question-container">
 
-<div class="card-footer">
-    <div class="row">
-        <div class="col-sm-3 col-6">
-            <div class="description-block border-right" style="margin-left: 20px;" id="question-container1">
+                    </div>
+                </div> -->
+                
+                 
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container1">
 
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container2">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container3">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right" style="margin-left: 20px;" id="question-container4">
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- <div class="col-md-4" style="padding-top: 10px;">
+                <button type="button" id="question-select" class="btn btn-primary">Next Question</button>
+                </div>
+                <div>Total Count of Respondents: <span id="total-count"></span></div> -->
+
+                <!-- /.row -->
             </div>
+            <!-- /.card-footer -->
         </div>
-        <div class="col-sm-3 col-6">
-            <div class="description-block border-right" style="margin-left: 20px;" id="question-container2">
 
-            </div>
-        </div>
-        <div class="col-sm-3 col-6">
-            <div class="description-block border-right" style="margin-left: 20px;" id="question-container3">
+        <!-- /.card -->
 
-            </div>
-        </div>
-        <div class="col-sm-3 col-6">
-            <div class="description-block border-right" style="margin-left: 20px;" id="question-container4">
-
-            </div>
-        </div>
     </div>
-</div>
-</div>
-
-</div>
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <?php
-$this->registerJsVar('typeData', ["A", "B", "C", "D"]);
-$this->registerJsVar('countData', json_encode($questionCounts));
-$questionIds = array_keys($questionCounts);
-$this->registerJsVar('selectedValuesToIndices', $questionIds);
-
-
-$this->registerJs(
-    <<<JS
+// Assuming $typeData is an array containing your chart data
+    $this->registerJsVar('typeData', ["A", "B", "C", "D"]);
+    $this->registerJsVar('countData', json_encode($questionCounts)); 
+    $questionIds = array_keys($questionCounts);
+    $this->registerJsVar('selectedValuesToIndices', $questionIds);
+    
+    
+    $this->registerJs(
+        <<<JS
         (function () {
         
             var ctx = document.getElementById('myChart').getContext('2d');
             let chart;
+            
+         // Add this function to calculate total count
         function calculateTotalCount(counts) {
             return Object.values(counts).reduce((acc, val) => acc + val, 0);
         }
-        const maxRespondentsLimit = 120;
+
+    // Add a variable to hold the maximum number of respondents allowed
+        const maxRespondentsLimit = 120; // Adjust this value as needed
+
+        // Update the updateChart function to calculate total count, apply limit, and update chart data
         function updateChart(selectedQuestionId) {
         const selectedIndex = selectedValuesToIndices.indexOf(parseInt(selectedQuestionId));
         if (selectedIndex !== -1) {
             const counts = JSON.parse(countData);
 
+        // Calculate total count
         const totalCount = calculateTotalCount(counts[selectedQuestionId]);
+
+        // Apply limit if total count exceeds the maximum limit
         const limitedTotalCount = totalCount > maxRespondentsLimit ? maxRespondentsLimit : totalCount;
+
+        // Update total count display
         $('#total-count').text(limitedTotalCount);
 
+        // Calculate count data array
         const countDataArray = typeData.map(option => {
             const count = counts[selectedQuestionId][option] || 0;
+            // Apply percentage calculation based on limited total count
             return (count / limitedTotalCount) * 120;
         });
 
@@ -104,6 +139,8 @@ $this->registerJs(
             console.log('Selected Question ID not found in mapping.');
         }
     }
+
+            // Initial chart setup
             chart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -129,7 +166,7 @@ $this->registerJs(
                         size: 20
                     },
                     formatter: function(value, context) {
-                        return value.toFixed(2) + '%';
+                        return value.toFixed(2) + '%'; // Formats the label with two decimal places and adds the percentage sign
                     }
                 }
             }]
@@ -206,3 +243,9 @@ $this->registerJs(
 JS
 );
 ?>
+
+
+
+<script>
+// JavaScript to handle Select2 change event
+</script>

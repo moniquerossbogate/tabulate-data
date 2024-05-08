@@ -2,29 +2,29 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\UserProfile;
-use Yii;
+use app\models\Response;
 
-
-class UserProfileSearch extends UserProfile
+/**
+ * ResponseSearch represents the model behind the search form about `app\models\Response`.
+ */
+class ResponseSearch extends Response
 {
-    public $designation;
-
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id',], 'integer'],
-            [['firstname', 'lastname', 'middlename', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'questionnaire_id', 'choices_id'], 'integer'],
+            [['agency', 'response_date'], 'safe'],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scenarios()
     {
@@ -41,16 +41,11 @@ class UserProfileSearch extends UserProfile
      */
     public function search($params)
     {
-        $query = UserProfile::find();
-
+        $query = Response::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['defaultPageSize'],
-            ],
         ]);
-
 
         $this->load($params);
 
@@ -60,17 +55,14 @@ class UserProfileSearch extends UserProfile
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'questionnaire_id' => $this->questionnaire_id,
+            'choices_id' => $this->choices_id,
+            'response_date' => $this->response_date,
         ]);
 
-        $query->andFilterWhere(['like', 'firstname', $this->firstname])
-            ->andFilterWhere(['like', 'lastname', $this->lastname])
-            ->andFilterWhere(['like', 'middlename', $this->middlename]);
-
+        $query->andFilterWhere(['like', 'agency', $this->agency]);
 
         return $dataProvider;
     }

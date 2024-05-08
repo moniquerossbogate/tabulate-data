@@ -9,6 +9,10 @@ use Yii;
  *
  * @property int $id
  * @property int $questionnaire_id
+ * @property string $question_text
+ * @property string $question_type
+ * @property string $created_at
+ * @property string $updated_at
  *
  * @property Merge[] $merges
  * @property Questionnaire $questionnaire
@@ -16,6 +20,8 @@ use Yii;
  */
 class Choices extends \yii\db\ActiveRecord
 {
+    const IS_PRIVATE = 1;
+    const IS_PUBLIC = 0;
     /**
      * {@inheritdoc}
      */
@@ -30,8 +36,10 @@ class Choices extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+
             [['questionnaire_id'], 'required'],
-            [['questionnaire_id'], 'integer'],
+            [['questionnaire_id', 'id'], 'integer'],
+            [['is_public'], 'boolean'],
             [['questionnaire_id'], 'exist', 'skipOnError' => true, 'targetClass' => Questionnaire::class, 'targetAttribute' => ['questionnaire_id' => 'id']],
         ];
     }
@@ -43,7 +51,8 @@ class Choices extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'questionnaire_id' => 'Questionnaire ID',
+            'questionnaire_id' => 'Title',
+            'is_public' => 'Status',
         ];
     }
 
@@ -75,10 +84,5 @@ class Choices extends \yii\db\ActiveRecord
     public function getResponses()
     {
         return $this->hasMany(Response::class, ['choices_id' => 'id']);
-    }
-
-    public static function getProducts()
-    {
-        return self::find()->all();
     }
 }

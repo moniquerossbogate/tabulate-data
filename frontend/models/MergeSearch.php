@@ -4,22 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\UserProfile;
-use Yii;
+use app\models\Merge;
 
-
-class UserProfileSearch extends UserProfile
+/**
+ * MergeSearch represents the model behind the search form of `app\models\Merge`.
+ */
+class MergeSearch extends Merge
 {
-    public $designation;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id',], 'integer'],
-            [['firstname', 'lastname', 'middlename', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'choices_id'], 'integer'],
+            [['question_text', 'question_type'], 'safe'],
         ];
     }
 
@@ -41,16 +40,13 @@ class UserProfileSearch extends UserProfile
      */
     public function search($params)
     {
-        $query = UserProfile::find();
+        $query = Merge::find();
 
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['defaultPageSize'],
-            ],
         ]);
-
 
         $this->load($params);
 
@@ -63,14 +59,11 @@ class UserProfileSearch extends UserProfile
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'choices_id' => $this->choices_id,
         ]);
 
-        $query->andFilterWhere(['like', 'firstname', $this->firstname])
-            ->andFilterWhere(['like', 'lastname', $this->lastname])
-            ->andFilterWhere(['like', 'middlename', $this->middlename]);
-
+        $query->andFilterWhere(['like', 'question_text', $this->question_text])
+            ->andFilterWhere(['like', 'question_type', $this->question_type]);
 
         return $dataProvider;
     }

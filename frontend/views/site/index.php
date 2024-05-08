@@ -21,7 +21,8 @@ use yii\web\View;
     }
 
     .regForm {
-        background-color: #ffffff;
+        background-color: black;
+        color: white;
         margin: 0 auto;
         font-family: sans-serif;
         padding: 0 40px;
@@ -31,12 +32,12 @@ use yii\web\View;
 
     h4 {
         text-align: center;
-        color: gray;
+        color: white;
     }
 
     .logo {
         text-align: center;
-        padding-top: 90px;
+        padding-top: 100px;
     }
 
     img {
@@ -152,9 +153,9 @@ use yii\web\View;
         });
 
 
-        function validationForm() {
-            if (window.confirm("Are you sure to submit this form?")) {
-                document.getElementById("mainContent").style.display = "none";
+      //  function validationForm() {
+        //    if (window.confirm("Are you sure to submit this form?")) {
+          //      document.getElementById("mainContent").style.display = "none";
 
                 // Swal.fire({
                 //     title: "Submitted Successfully!",
@@ -163,12 +164,14 @@ use yii\web\View;
                 //     timer: 3000
                 // },
             // );
-                return true;
-            } else {
-                document.getElementById("mainContent").style.display = "block";
-                return false;
-            }
-        };
+            
+            
+            //return true;
+            //} else {
+              //  document.getElementById("mainContent").style.display = "block";
+                //return false;
+            //}
+        //};
     </script>
 
 </body>

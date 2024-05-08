@@ -50,7 +50,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => '@w
 
     <div class="wrapper">
         <!-- Navbar -->
-        <?= $this->render('navbar', ['assetDir' => $assetDir]) ?>
+        <?= $this->render('navbar', ['assetDir' => $assetDir]) ?> 
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->

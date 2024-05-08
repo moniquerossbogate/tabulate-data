@@ -4,22 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\UserProfile;
-use Yii;
+use app\models\Choices;
 
-
-class UserProfileSearch extends UserProfile
+/**
+ * ChoicesSearch represents the model behind the search form of `app\models\Choices`.
+ */
+class ChoicesSearch extends Choices
 {
-    public $designation;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id',], 'integer'],
-            [['firstname', 'lastname', 'middlename', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'questionnaire_id'], 'integer'],
+
         ];
     }
 
@@ -41,16 +40,13 @@ class UserProfileSearch extends UserProfile
      */
     public function search($params)
     {
-        $query = UserProfile::find();
+        $query = Choices::find();
 
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['defaultPageSize'],
-            ],
         ]);
-
 
         $this->load($params);
 
@@ -63,13 +59,9 @@ class UserProfileSearch extends UserProfile
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+            'questionnaire_id' => $this->questionnaire_id,
 
-        $query->andFilterWhere(['like', 'firstname', $this->firstname])
-            ->andFilterWhere(['like', 'lastname', $this->lastname])
-            ->andFilterWhere(['like', 'middlename', $this->middlename]);
+        ]);
 
 
         return $dataProvider;

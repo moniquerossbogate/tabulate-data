@@ -4,22 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\UserProfile;
-use Yii;
+use app\models\Questionnaire;
 
-
-class UserProfileSearch extends UserProfile
+/**
+ * QuestionnaireSearch represents the model behind the search form of `app\models\Questionnaire`.
+ */
+class QuestionnaireSearch extends Questionnaire
 {
-    public $designation;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id',], 'integer'],
-            [['firstname', 'lastname', 'middlename', 'created_at', 'updated_at'], 'safe'],
+            [['id'], 'integer'],
+            [['title', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -41,16 +40,13 @@ class UserProfileSearch extends UserProfile
      */
     public function search($params)
     {
-        $query = UserProfile::find();
+        $query = Questionnaire::find();
 
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['defaultPageSize'],
-            ],
         ]);
-
 
         $this->load($params);
 
@@ -67,10 +63,7 @@ class UserProfileSearch extends UserProfile
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'firstname', $this->firstname])
-            ->andFilterWhere(['like', 'lastname', $this->lastname])
-            ->andFilterWhere(['like', 'middlename', $this->middlename]);
-
+        $query->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

@@ -13,7 +13,6 @@ $titles = Questionnaire::getQuestions();
 $this->title = 'Tabulate Data';
 // ChartAsset::register($this);
 
-
 ?>
 
 <head>

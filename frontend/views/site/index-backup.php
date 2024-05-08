@@ -1,163 +1,82 @@
-<?php
-
-// ... other use statements ...
-
-use yii\helpers\Url;
-use yii\widgets\ActiveForm; // Add this line to import ActiveForm
-use app\models\Choices;
-use app\models\Merge;
-use yii\helpers\Html;
-use yii\web\View;
-
-/** @var View $this */
-/** @var app\models\Questionnaire $model */
-/** @var yii\widgets\ActiveForm $form */
-?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<style>
-    * {
-        box-sizing: border-box;
-    }
+<?php
+use app\models\Questionnaire;
+use kartik\select2\Select2;
+use yii\bootstrap4\Html;
+use yii\helpers\ArrayHelper;
+use app\assets\ChartJsAsset;
+use app\assets\ChartAsset;
 
-    .regForm {
-        background-color: #ffffff;
-        margin: 0 auto;
-        font-family: sans-serif;
-        padding: 0 40px;
-        min-width: 220px;
+/** @var yii\web\View $this */
+$titles = Questionnaire::getQuestions();
+$this->title = 'Tabulate Data';
+// ChartAsset::register($this);
 
-    }
+?>
 
-    h4 {
-        text-align: center;
-        color: gray;
-    }
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-    .logo {
-        text-align: center;
-    }
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
-    img {
-        width: 140px;
-        height: 140px;
-    }
+    <canvas id="myChart" width="400" height="100"></canvas>
+    <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1,
+                datalabels: {
+                    color: 'green'
+                }
 
-    #myAni {
-        animation: myAni 3s ease 0.5s infinite alternate;
-    }
-
-    @keyframes myAni {
-        0% {
-            opacity: 1;
-            
-        } 50% {
-            opacity: 0;
-            
-            
-        } 100% {
-            opacity: 1;
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+        plugins: [ChartDataLabels],
+        options: {
 
         }
-    }
 
-
-</style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://kit.fontawesome.com/3f22f7edc5.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<body>
-    <div class="logo"><img src="../images/logo.png" alt="logo"></div>
-    <div class="regForm" id="mainContent" onsubmit="return validationForm()">
-        <?php $form = ActiveForm::begin(
-            [
-                'id' => 'dynamic-form',
-                'action' => ['create'],
-                'options' => ['data-pjax' => false],
-            ]
-        ); ?>
-
-        <div class="tab">
-            <?= Html::hiddenInput('selected_values', null, ['id' => 'selected_values']) ?>
-
-            <div><br>
-                <p>
-                    <?php if (!empty($titles) && ($public)) : ?>
-                    <div class="portfolio-description">
-                        <h4>Question: <i class="fa-sharp fa-solid fa-circle-question" id="myAni"></i></h4>
-                        <?php foreach ($titles as $title) :?>
-                            <?php if ($title->is_public == 0) : ?>
-                                <br>
-                                <p><?= $title->questionnaire->title ?></p>
-                                <br>
-                                <?php
-                                $group = Merge::find()->where(['choices_id' => $title['id']])->all();
-                                foreach ($group as $single) :
-                                    ?>
-                                    <div class="radio">
-                                        <input id="service_check<?= $single['id'] ?>" name="radio" class="cb-services" type="radio" value="<?= $single['id'] ?>"> &nbsp;&nbsp;
-                                        <label for="service_check<?= $single['id'] ?>" class="radio-label"><?= $single->question_text ?></label>
-                                    </div><br>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                </p>
-                <?= $form->field($model, 'agency')->textInput(['maxlength' => true, 'placeholder' => 'Name(optional)'])->label('Agency:') ?>
-            </div>
-
-            <div class="form-group pull-left" style="padding-top:10px; float: right; margin-right: 8px;">
-                <?= Html::submitButton('Submit', [
-                    'class' => 'btn btn-primary disabled',
-                    'id' => 'service_button',
-                    'disabled' => true,
-                ]) ?>
-            </div>
-        </div>
-
-        <?php endif; ?>
-        <?php ActiveForm::end(); ?>
-        </div>
-
-        <script>
-            $(function() {
-                $(".cb-services").on('change', function() {
-                    var st = $('.cb-services:checked').length;
-                    if (st > 0) {
-                        $('#service_button').prop("disabled", false).removeClass('disabled');
-                    } else {
-                        $('#service_button').prop("disabled", true).addClass('disabled');
-                    }
-                });
-
-                $('#dynamic-form').on('submit', function() {
-                    let selected_cb = $("input[name='radio']:checked").val();
-                    $('#selected_values').val(selected_cb);
-                    return true;
-                });
-            });
-
-           
-            function validationForm() {
-                if(window.confirm("Are you sure to submit this form?")) {
-                    document.getElementById("mainContent").style.display = "none";
-
-                    Swal.fire({
-                    title: "Submitted Successfully!",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500
-                    });
-
-                    return true;
-                } else {
-                    document.getElementById("mainContent").style.display = "block";
-                    return false;
-                }
-            };
-            
-        </script>
+    });
+    </script>
 
 </body>
+
 </html>

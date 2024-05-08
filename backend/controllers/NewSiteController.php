@@ -1,5 +1,7 @@
 <?php
+
 namespace app\controllers;
+
 use app\models\Choices;
 use app\models\Merge;
 use app\models\Questionnaire;
@@ -14,7 +16,7 @@ use mdm\admin\components\Helper;
 use yii\helpers\Url;
 use yii\helpers\Json;
 
-class SiteController extends Controller
+class NewSiteController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -100,6 +102,8 @@ class SiteController extends Controller
         $question2Counts = [];
         $question3Counts = [];
         $question4Counts = [];
+        $question5Counts = [];
+        $question6Counts = [];
 
         foreach ($idToLetter as $id => $letter) {
             $responses = \app\models\Response::find()->where(['merge_id' => $id])->all();
@@ -119,6 +123,8 @@ class SiteController extends Controller
             'question2Counts' => $question2Counts,
             'question3Counts' => $question3Counts,
             'question4Counts' => $question4Counts,
+            'question5Counts' => $question5Counts,
+            'question6Counts' => $question6Counts,
             'idToQuestions' => $idToQuestions,
         ]);
 
@@ -136,15 +142,19 @@ class SiteController extends Controller
             ->where(['questionnaire.id' => $titleId])
             ->all();
 
+
         // Prepare the data to be sent as JSON
         $formattedQuestions = [];
         foreach ($questions as $question) {
+
             $formattedQuestions[] = [
                 $question->question_text, // Adjust with the correct attribute name
+
             ];
         }
 
         return Json::encode($formattedQuestions);
+        
     }
 
 
@@ -212,4 +222,18 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    
+    public function actionGetChoices($questionnaire_id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $choices = Choices::find()
+            ->select('choices') 
+            ->where(['questionnaire_id' => $questionnaire_id])
+            ->asArray()
+            ->column();
+
+        return $choices;
+}
 }

@@ -13,6 +13,8 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Response;
 use SebastianBergmann\Timer\Timer;
+use yii\helpers\Json;
+use yii\web\Response as WebResponse;
 
 class SiteController extends Controller
 {
@@ -68,8 +70,8 @@ class SiteController extends Controller
         $model = new Response();
         $titles = Choices::find()->all();
         $public = Choices::find()->where(['is_public' => 0])->all();
-       
-       
+
+
         $questionaires = Merge::find()->all();
         return $this->render(
             'index',
@@ -81,57 +83,125 @@ class SiteController extends Controller
             ]
         );
     }
+    public function actionDashboard()
+    {
+        $mergeTableData = Merge::find()->all();
 
-    public function actionCreate() {
+        $idToLetter = [];
+        $idToQuestions = [];
+
+        $letters = ['A', 'B', 'C', 'D'];
+
+        // Fetch all unique questionnaire IDs from the Choices table
+        $choicesIds = array_unique(array_column($mergeTableData, 'choices_id'));
+        $choices = Choices::find()->where(['id' => $choicesIds])->indexBy('id')->all();
+
+        //get the questions per title
+        foreach ($mergeTableData as $row) {
+            $idToLetter[$row['id']] = $letters[count($idToLetter) % 4];
+            $choicesItem = $choices[$row['choices_id']];
+            $questionnaireId = $choicesItem->questionnaire_id;
+            $questionnaire = Questionnaire::findOne($questionnaireId);
+            if ($questionnaire) {
+                $title = $questionnaire->title;
+                if (!isset($idToQuestions[$title])) {
+                    $idToQuestions[$title] = [];
+                }
+                $idToQuestions[$title][] = $row['question_text'];
+            }
+        }
+
+        // Counting responses per question as before
+        $questionCounts = [];
+
+        foreach ($idToLetter as $id => $letter) {
+            $responses = Response::find()->where(['merge_id' => $id])->all();
+            foreach ($responses as $response) {
+                $questionnaireId = $response->questionnaire_id;
+                $countVar = 'question' . $questionnaireId . 'Counts';
+                if (!isset($questionCounts[$questionnaireId][$letter])) {
+                    $questionCounts[$questionnaireId][$letter] = 1;
+                } else {
+                    $questionCounts[$questionnaireId][$letter]++;
+                }
+            }
+        }
+
+        return $this->render('dashboard', [
+            'questionCounts' => $questionCounts,
+            'idToQuestions' => $idToQuestions,
+        ]);
+    }
+    public function actionQuestions($titleId)
+    {
+        Yii::$app->response->format = WebResponse::FORMAT_JSON;
+
+
+        $questions = Merge::find()
+            ->joinWith(['choices.questionnaire'])
+            ->where(['questionnaire.id' => $titleId])
+            ->all();
+
+
+        $formattedQuestions = [];
+        foreach ($questions as $question) {
+            $formattedQuestions[] = [
+                $question->question_text,
+            ];
+        }
+
+        return Json::encode($formattedQuestions);
+    }
+
+
+
+    public function actionCreate()
+    {
         $model = new Response();
         $titles = Choices::find()->all();
-        $public = Choices::find()->where(['is_public' => 0 ])->all();
+        $public = Choices::find()->where(['is_public' => 0])->all();
         $questionaires = Merge::find()->all();
-    
 
-        $respondentsId = explode(',',$_POST['selected_values']);
 
-        if($model->load(Yii::$app->request->post())) {
+        $respondentsId = explode(',', $_POST['selected_values']);
+
+        if ($model->load(Yii::$app->request->post())) {
             $model->response_date = date('Y-m-d H:i:s');
             $respondentsId = array_filter($respondentsId);
 
-            foreach($respondentsId as $id) {
+            foreach ($respondentsId as $id) {
                 $chooseId = explode(':', $id);
                 $merge = Merge::find()->where(['id' => $chooseId[0]])->one();
                 $status = Choices::find()->where(['id' => $merge->choices_id])->one();
                 $model->choices_id = $merge->choices_id;
                 $model->merge_id = $merge->id;
                 $model->questionnaire_id = $merge->choices->questionnaire_id;
-            // $status->is_public = 1;
-            // $status->save();
+                // $status->is_public = 1;
+                // $status->save();
                 $model->save();
-              
-               
-
             }
-           
+
             Yii::$app->getSession()->setFlash('success', [
                 'text' => 'Thank you for submitting!',
             ]);
             return $this->redirect('view');
-
         }
 
         return $this->render(
             'index',
             [
-                'model' =>$model,
+                'model' => $model,
                 'questionaires' => $questionaires,
                 'titles' => $titles,
                 'public' => $public,
             ]
-            );
+        );
     }
 
-    public function actionView() {
-        
-        return $this->render('view');
+    public function actionView()
+    {
 
+        return $this->render('view');
     }
 
     /**
@@ -155,7 +225,7 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
- 
+
     /**
      * Logout action.
      *
@@ -195,5 +265,6 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
 
 }

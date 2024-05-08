@@ -72,7 +72,7 @@ class Questionnaire extends \yii\db\ActiveRecord
 
     public static function getQuestions()
     {
-        return self::find()->orderBy(['title' => SORT_ASC])->all();
+        return self::find()->orderBy(['id' => SORT_ASC])->all();
     }
 
 }

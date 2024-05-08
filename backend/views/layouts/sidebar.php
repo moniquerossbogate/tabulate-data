@@ -4,7 +4,7 @@ use mdm\admin\components\MenuHelper;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
-$menuItems = [
+ $menuItems = [
     [
         'label' => 'Questionnaire',
         'url' => ['/questionnaire/index'],
@@ -66,15 +66,17 @@ $menuItems = Helper::filter($menuItems);
 $userItems = Helper::filter($userItems);
 $securityItems = Helper::filter($securityItems);
 ?>
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
     <a href="/site/index" class="brand-link">
         <img src="/image/dost-logo1.png" alt="Logo" class="brand-image img-circle elevation-3"
             style="background-color: transparent;">
+
         <span class="brand-text font-weight-light">
             <?= Yii::$app->name ?>
         </span>
     </a>
-    <!-- Sidebar -->
+
     <div class="sidebar">
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -89,5 +91,8 @@ $securityItems = Helper::filter($securityItems);
             ]);
             ?>
         </nav>
+        <!-- /.sidebar-menu -->
     </div>
+    <!-- /.sidebar -->
+    
 </aside>

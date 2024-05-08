@@ -44,7 +44,7 @@ class ResponseController extends Controller
     {
         $searchModel = new ResponseSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
